@@ -1,0 +1,167 @@
+---
+title: "Streamlit Reference"
+subtitle: "STAT 386 · Useful data apps"
+---
+
+[Download the printable reference](reference/Streamlit_Cheatsheet.pdf). Start with the commands you need for the next useful change.
+
+## Launch from the project root
+
+```bash
+uv sync
+uv run streamlit run app.py
+```
+
+Leave the terminal open. Ctrl+C stops the server. Streamlit scripts run through the terminal, rather than as ordinary notebook cells.
+
+## Display information
+
+```python
+import streamlit as st
+
+st.title("Conference Message Explorer")
+st.header("Explore the sample")
+st.subheader("Read a message")
+st.write("Text, numbers, or other objects")
+st.markdown("**Important context**")
+st.caption("52 selected kickers, not the complete archive")
+st.metric("Talks displayed", 16)
+st.dataframe(df, hide_index=True)
+```
+
+`print(...)` writes to the server's terminal or logs. `st.write(...)` displays in the browser. Use explicit Streamlit display calls while learning.
+
+## Inputs return Python values
+
+```python
+year = st.selectbox("Year", [2020, 2023, 2025])
+years = st.multiselect("Years", [2020, 2023, 2025], default=[2025])
+earliest = st.select_slider("Earliest year", [2020, 2023, 2025])
+n = st.slider("Number to show", min_value=1, max_value=10, value=5)
+text = st.text_input("Words in the title")
+show_table = st.checkbox("Show supporting records", value=True)
+
+shown = df.loc[df["year"].isin(years)]
+if show_table:
+    st.dataframe(shown)
+```
+
+In the basic execution model, committing a widget change reruns the script from top to bottom. A text input normally commits when the reader presses Enter or leaves the field. Plotly hover and zoom remain browser interactions unless the app explicitly connects supported events to Python.
+
+## Charts
+
+```python
+st.bar_chart(shown.groupby("year").size().rename("Talks"))
+
+import plotly.express as px
+fig = px.scatter(shown, x="PHATE1", y="PHATE2",
+                 color="role_group", hover_name="title")
+st.plotly_chart(fig, width="stretch")
+
+# For a Matplotlib or Seaborn figure:
+st.pyplot(fig_matplotlib)
+```
+
+Plotly builds the interactive figure. Streamlit connects it to the rest of the app and to Python computations.
+
+## Layout and supporting evidence
+
+```python
+with st.sidebar:
+    year = st.selectbox("Year", [2020, 2023, 2025])
+
+left, right = st.columns(2)
+left.metric("Talks displayed", len(shown))
+right.metric("Speakers represented", shown["speaker"].nunique())
+
+with st.expander("Sources and interpretation"):
+    st.write("Explain the sample, definitions, and limitations.")
+
+st.link_button("Read the original talk", source_url)
+```
+
+An expander changes visibility. In the default behavior used here, putting code inside it does not make that computation wait until expansion.
+
+## Empty results
+
+```python
+if shown.empty:
+    st.info("No matches. Broaden your filters.")
+    st.stop()
+```
+
+State clearly what an empty selection means. Apply the same filters to the map, metrics, and supporting records.
+
+## Cache returned data
+
+```python
+@st.cache_data
+def compute_map(X, random_state=386):
+    print("CACHE MISS: fitting PHATE")
+    return phate.PHATE(random_state=random_state).fit_transform(X)
+
+coordinates = compute_map(X)
+```
+
+Matching function inputs and code can reuse a result. Changed inputs produce a different entry. The function call still occurs on a rerun, while a hit skips the body. Data caching returns copies. Default caches can be reused across users.
+
+```python
+@st.cache_data(ttl=600)  # seconds
+def fetch_data(url):
+    return pd.read_csv(url)
+
+compute_map.clear()  # clear only this function's cached entries
+```
+
+Expiration affects a subsequent call. It does not schedule background data collection. A filename by itself does not capture changes in the file's contents. Our complete loader passes file bytes explicitly.
+
+## Remember additional session values
+
+```python
+if "count" not in st.session_state:
+    st.session_state.count = 0
+if st.button("Add one"):
+    st.session_state.count += 1
+st.write(st.session_state.count)
+```
+
+| Need | Choose |
+|---|---|
+| Reuse a returned dataset or computation | `st.cache_data` |
+| Reuse an in-process model or connection | `st.cache_resource` |
+| Remember additional values for this session | `st.session_state` |
+| Keep processed outputs across restarts | A saved, versioned data artifact |
+
+Resource caching normally returns a shared object. Consider mutation and concurrent use. It does not cache the Ollama server's model process for you.
+
+## Batch inputs with a form
+
+```python
+with st.form("request"):
+    message = st.text_area("Message")
+    submitted = st.form_submit_button("Analyze")
+
+if submitted and message.strip():
+    st.write(message)
+```
+
+The form submits its values together. Use it when running after every individual input change would be unhelpful.
+
+## Deployment reminder
+
+1. Run locally and check the original user task.
+2. Commit code, data artifacts, `pyproject.toml`, and `uv.lock`.
+3. At [share.streamlit.io](https://share.streamlit.io), select the repository, branch, and `app.py`.
+4. Select Python 3.12, deploy, and check logs and access.
+5. Commit and push changes to update the app.
+
+GitHub stores the project. Community Cloud runs Python. GitHub Pages hosts the static website and can link to the app. Keep credentials out of Git. This demo needs none.
+
+## Official references
+
+- [App model](https://docs.streamlit.io/get-started/fundamentals/summary)
+- [Widgets](https://docs.streamlit.io/develop/concepts/architecture/widget-behavior)
+- [Caching](https://docs.streamlit.io/develop/concepts/architecture/caching)
+- [Session State](https://docs.streamlit.io/develop/concepts/architecture/session-state)
+- [Plotly charts](https://docs.streamlit.io/develop/api-reference/charts/st.plotly_chart)
+- [Cloud dependencies](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/app-dependencies)

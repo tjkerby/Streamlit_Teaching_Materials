@@ -1,0 +1,11 @@
+:root { --ink:#15324b; --accent:#a76316; }
+body { color:#203344; }
+h1,h2,h3 { color:var(--ink); }
+.navbar { background:#15324b; }
+.navbar a,.navbar .navbar-brand { color:#fff!important; }
+a { color:#20608a; }
+.quarto-title-banner { background:#f4f1e9; }
+pre { border-left:3px solid #d5a75f; }
+blockquote { border-left:4px solid #d5a75f; color:#294e68; }
+.caption { color:#516573; }
+@media print { .navbar,.sidebar,.toc-actions { display:none!important; } }

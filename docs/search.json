@@ -1,0 +1,723 @@
+[
+  {
+    "objectID": "activities/questions.html",
+    "href": "activities/questions.html",
+    "title": "Student Investigation",
+    "section": "",
+    "text": "Use the app as a reader first. Write your answers in the separate practice notebook. Run Streamlit apps in a terminal, not as notebook cells."
+  },
+  {
+    "objectID": "activities/questions.html#day-1-a-useful-interface",
+    "href": "activities/questions.html#day-1-a-useful-interface",
+    "title": "Student Investigation",
+    "section": "Day 1: a useful interface",
+    "text": "Day 1: a useful interface\n\nDescribe a specific person and a question they would ask about your final-project data.\nExplain why repeated interaction would help. Could a figure or report meet the need?\nChoose one control. State its default, what it changes, and how the app should handle no matching results.\nPropose one useful summary metric. Define its denominator and explain which filters affect it."
+  },
+  {
+    "objectID": "activities/questions.html#day-1-predict-execution",
+    "href": "activities/questions.html#day-1-predict-execution",
+    "title": "Student Investigation",
+    "section": "Day 1: predict execution",
+    "text": "Day 1: predict execution\nIn day1/02_execution.py, predict the first counter after two button clicks and after editing the name. Compare it to the Session State counter. Explain where the terminal output appears."
+  },
+  {
+    "objectID": "activities/questions.html#day-2-explore-the-messages",
+    "href": "activities/questions.html#day-2-explore-the-messages",
+    "title": "Student Investigation",
+    "section": "Day 2: explore the messages",
+    "text": "Day 2: explore the messages\n\nChoose a question about the represented messages, years, or recorded speaker roles.\nFind at least three kickers that help investigate it.\nRead a message that complicates your first interpretation.\nOpen a source talk when the kicker is insufficient.\nState one supported finding and one next check. Restrict conclusions to this selected sample."
+  },
+  {
+    "objectID": "activities/questions.html#day-2-reason-about-computation",
+    "href": "activities/questions.html#day-2-reason-about-computation",
+    "title": "Student Investigation",
+    "section": "Day 2: reason about computation",
+    "text": "Day 2: reason about computation\nFor each change, decide whether loading, embedding generation, PHATE, filtering, and summary calculations need new results:\n\nChange the point colors.\nHide a year from the existing map.\nEdit one kicker’s text in the dataset.\nChange the PHATE random-state argument.\n\nDifferentiate what the script executes from what a cache can reuse."
+  },
+  {
+    "objectID": "activities/questions.html#optional-extension",
+    "href": "activities/questions.html#optional-extension",
+    "title": "Student Investigation",
+    "section": "Optional extension",
+    "text": "Optional extension\nImprove one part of the app for your chosen user. Ask a partner to complete the task without coaching. Record the point where they hesitate and revise the interface."
+  },
+  {
+    "objectID": "cheatsheet.html",
+    "href": "cheatsheet.html",
+    "title": "Streamlit Reference",
+    "section": "",
+    "text": "Download the printable reference. Start with the commands you need for the next useful change."
+  },
+  {
+    "objectID": "cheatsheet.html#launch-from-the-project-root",
+    "href": "cheatsheet.html#launch-from-the-project-root",
+    "title": "Streamlit Reference",
+    "section": "Launch from the project root",
+    "text": "Launch from the project root\nuv sync\nuv run streamlit run app.py\nLeave the terminal open. Ctrl+C stops the server. Streamlit scripts run through the terminal, rather than as ordinary notebook cells."
+  },
+  {
+    "objectID": "cheatsheet.html#display-information",
+    "href": "cheatsheet.html#display-information",
+    "title": "Streamlit Reference",
+    "section": "Display information",
+    "text": "Display information\nimport streamlit as st\n\nst.title(\"Conference Message Explorer\")\nst.header(\"Explore the sample\")\nst.subheader(\"Read a message\")\nst.write(\"Text, numbers, or other objects\")\nst.markdown(\"**Important context**\")\nst.caption(\"52 selected kickers, not the complete archive\")\nst.metric(\"Talks displayed\", 16)\nst.dataframe(df, hide_index=True)\nprint(...) writes to the server’s terminal or logs. st.write(...) displays in the browser. Use explicit Streamlit display calls while learning."
+  },
+  {
+    "objectID": "cheatsheet.html#inputs-return-python-values",
+    "href": "cheatsheet.html#inputs-return-python-values",
+    "title": "Streamlit Reference",
+    "section": "Inputs return Python values",
+    "text": "Inputs return Python values\nyear = st.selectbox(\"Year\", [2020, 2023, 2025])\nyears = st.multiselect(\"Years\", [2020, 2023, 2025], default=[2025])\nearliest = st.select_slider(\"Earliest year\", [2020, 2023, 2025])\nn = st.slider(\"Number to show\", min_value=1, max_value=10, value=5)\ntext = st.text_input(\"Words in the title\")\nshow_table = st.checkbox(\"Show supporting records\", value=True)\n\nshown = df.loc[df[\"year\"].isin(years)]\nif show_table:\n    st.dataframe(shown)\nIn the basic execution model, committing a widget change reruns the script from top to bottom. A text input normally commits when the reader presses Enter or leaves the field. Plotly hover and zoom remain browser interactions unless the app explicitly connects supported events to Python."
+  },
+  {
+    "objectID": "cheatsheet.html#charts",
+    "href": "cheatsheet.html#charts",
+    "title": "Streamlit Reference",
+    "section": "Charts",
+    "text": "Charts\nst.bar_chart(shown.groupby(\"year\").size().rename(\"Talks\"))\n\nimport plotly.express as px\nfig = px.scatter(shown, x=\"PHATE1\", y=\"PHATE2\",\n                 color=\"role_group\", hover_name=\"title\")\nst.plotly_chart(fig, width=\"stretch\")\n\n# For a Matplotlib or Seaborn figure:\nst.pyplot(fig_matplotlib)\nPlotly builds the interactive figure. Streamlit connects it to the rest of the app and to Python computations."
+  },
+  {
+    "objectID": "cheatsheet.html#layout-and-supporting-evidence",
+    "href": "cheatsheet.html#layout-and-supporting-evidence",
+    "title": "Streamlit Reference",
+    "section": "Layout and supporting evidence",
+    "text": "Layout and supporting evidence\nwith st.sidebar:\n    year = st.selectbox(\"Year\", [2020, 2023, 2025])\n\nleft, right = st.columns(2)\nleft.metric(\"Talks displayed\", len(shown))\nright.metric(\"Speakers represented\", shown[\"speaker\"].nunique())\n\nwith st.expander(\"Sources and interpretation\"):\n    st.write(\"Explain the sample, definitions, and limitations.\")\n\nst.link_button(\"Read the original talk\", source_url)\nAn expander changes visibility. In the default behavior used here, putting code inside it does not make that computation wait until expansion."
+  },
+  {
+    "objectID": "cheatsheet.html#empty-results",
+    "href": "cheatsheet.html#empty-results",
+    "title": "Streamlit Reference",
+    "section": "Empty results",
+    "text": "Empty results\nif shown.empty:\n    st.info(\"No matches. Broaden your filters.\")\n    st.stop()\nState clearly what an empty selection means. Apply the same filters to the map, metrics, and supporting records."
+  },
+  {
+    "objectID": "cheatsheet.html#cache-returned-data",
+    "href": "cheatsheet.html#cache-returned-data",
+    "title": "Streamlit Reference",
+    "section": "Cache returned data",
+    "text": "Cache returned data\n@st.cache_data\ndef compute_map(X, random_state=386):\n    print(\"CACHE MISS: fitting PHATE\")\n    return phate.PHATE(random_state=random_state).fit_transform(X)\n\ncoordinates = compute_map(X)\nMatching function inputs and code can reuse a result. Changed inputs produce a different entry. The function call still occurs on a rerun, while a hit skips the body. Data caching returns copies. Default caches can be reused across users.\n@st.cache_data(ttl=600)  # seconds\ndef fetch_data(url):\n    return pd.read_csv(url)\n\ncompute_map.clear()  # clear only this function's cached entries\nExpiration affects a subsequent call. It does not schedule background data collection. A filename by itself does not capture changes in the file’s contents. Our complete loader passes file bytes explicitly."
+  },
+  {
+    "objectID": "cheatsheet.html#remember-additional-session-values",
+    "href": "cheatsheet.html#remember-additional-session-values",
+    "title": "Streamlit Reference",
+    "section": "Remember additional session values",
+    "text": "Remember additional session values\nif \"count\" not in st.session_state:\n    st.session_state.count = 0\nif st.button(\"Add one\"):\n    st.session_state.count += 1\nst.write(st.session_state.count)\n\n\n\n\n\n\n\nNeed\nChoose\n\n\n\n\nReuse a returned dataset or computation\nst.cache_data\n\n\nReuse an in-process model or connection\nst.cache_resource\n\n\nRemember additional values for this session\nst.session_state\n\n\nKeep processed outputs across restarts\nA saved, versioned data artifact\n\n\n\nResource caching normally returns a shared object. Consider mutation and concurrent use. It does not cache the Ollama server’s model process for you."
+  },
+  {
+    "objectID": "cheatsheet.html#batch-inputs-with-a-form",
+    "href": "cheatsheet.html#batch-inputs-with-a-form",
+    "title": "Streamlit Reference",
+    "section": "Batch inputs with a form",
+    "text": "Batch inputs with a form\nwith st.form(\"request\"):\n    message = st.text_area(\"Message\")\n    submitted = st.form_submit_button(\"Analyze\")\n\nif submitted and message.strip():\n    st.write(message)\nThe form submits its values together. Use it when running after every individual input change would be unhelpful."
+  },
+  {
+    "objectID": "cheatsheet.html#deployment-reminder",
+    "href": "cheatsheet.html#deployment-reminder",
+    "title": "Streamlit Reference",
+    "section": "Deployment reminder",
+    "text": "Deployment reminder\n\nRun locally and check the original user task.\nCommit code, data artifacts, pyproject.toml, and uv.lock.\nAt share.streamlit.io, select the repository, branch, and app.py.\nSelect Python 3.12, deploy, and check logs and access.\nCommit and push changes to update the app.\n\nGitHub stores the project. Community Cloud runs Python. GitHub Pages hosts the static website and can link to the app. Keep credentials out of Git. This demo needs none."
+  },
+  {
+    "objectID": "cheatsheet.html#official-references",
+    "href": "cheatsheet.html#official-references",
+    "title": "Streamlit Reference",
+    "section": "Official references",
+    "text": "Official references\n\nApp model\nWidgets\nCaching\nSession State\nPlotly charts\nCloud dependencies"
+  },
+  {
+    "objectID": "demo.html",
+    "href": "demo.html",
+    "title": "Follow Along: Building the Explorer",
+    "section": "",
+    "text": "Open the project root in Positron. Run uv sync once. Keep all data and scripts together. Run app commands from the terminal and stop each server with Ctrl+C before starting the next.\nThe completed files are checkpoints, so you can recover without copying a whole screen of code. The main coding route is Day 1’s basic app, followed by Day 2’s map, filter, and caching. Extra controls and similarity rankings are optional extensions."
+  },
+  {
+    "objectID": "demo.html#before-starting",
+    "href": "demo.html#before-starting",
+    "title": "Follow Along: Building the Explorer",
+    "section": "",
+    "text": "Open the project root in Positron. Run uv sync once. Keep all data and scripts together. Run app commands from the terminal and stop each server with Ctrl+C before starting the next.\nThe completed files are checkpoints, so you can recover without copying a whole screen of code. The main coding route is Day 1’s basic app, followed by Day 2’s map, filter, and caching. Extra controls and similarity rankings are optional extensions."
+  },
+  {
+    "objectID": "demo.html#day-1-a-useful-input",
+    "href": "demo.html#day-1-a-useful-input",
+    "title": "Follow Along: Building the Explorer",
+    "section": "Day 1: a useful input",
+    "text": "Day 1: a useful input\nuv run streamlit run day1/01_basic.py\nThe file begins with familiar imports and a path relative to the script:\nfrom pathlib import Path\nimport pandas as pd\nimport streamlit as st\n\nROOT = Path(__file__).resolve().parents[1]\ndf = pd.read_csv(ROOT / \"data/talks.csv\")\n__file__ is this script’s location. Its first parent is day1, and its second parent is the project root. This avoids a Windows-specific absolute path and does not depend on the browser’s filesystem.\nAdd the interface:\nst.title(\"Explore conference messages\")\nyear = st.select_slider(\n    \"Earliest conference year\",\n    options=[2020, 2023, 2025], value=2020,\n)\nshown = df.loc[df[\"year\"] &gt;= year]\nst.metric(\"Talks displayed\", f\"{len(shown)} / {len(df)}\")\nst.bar_chart(shown.groupby(\"year\").size().rename(\"Talks\"))\nst.dataframe(shown[[\"title\", \"speaker\", \"year\", \"kicker\"]])\nExpected results from the supplied dataset:\n\n\n\nEarliest year\nTalks\nSpeakers\nConferences\n\n\n\n\n2020\n52\n35\n6\n\n\n2023\n36\n28\n4\n\n\n2025\n16\n16\n2\n\n\n\nSay what the chart counts: selected sample records, not the total number of talks in each year."
+  },
+  {
+    "objectID": "demo.html#day-1-observe-execution",
+    "href": "demo.html#day-1-observe-execution",
+    "title": "Follow Along: Building the Explorer",
+    "section": "Day 1: observe execution",
+    "text": "Day 1: observe execution\nuv run streamlit run day1/02_execution.py\nPredict before clicking. count = 0 runs again on every full script run. Each click on the first button displays 1. Changing and committing the name displays 0. print() appears in the terminal.\nThe separate Session State counter accumulates across reruns in this session. A new browser tab has its own session. This example supports reasoning about state and does not need to become part of the conference app."
+  },
+  {
+    "objectID": "demo.html#day-2-step-1-display-the-existing-analysis",
+    "href": "demo.html#day-2-step-1-display-the-existing-analysis",
+    "title": "Follow Along: Building the Explorer",
+    "section": "Day 2, step 1: display the existing analysis",
+    "text": "Day 2, step 1: display the existing analysis\nStart with day2/app_live.py. It runs immediately as a small table app. Complete TODO 1 using day2/01_map.py as the checkpoint.\nuv run streamlit run day2/app_live.py\nAfter reading df, load the saved vectors and verify their alignment:\nimport numpy as np\nimport phate\nimport plotly.express as px\n\nwith np.load(ROOT / \"data/talk_embeddings.npz\", allow_pickle=False) as saved:\n    assert np.array_equal(saved[\"talk_id\"], df[\"talk_id\"].to_numpy(dtype=str))\n    assert np.array_equal(saved[\"kicker\"], df[\"kicker\"].to_numpy(dtype=str))\n    X = saved[\"embeddings\"]\n\ncoordinates = phate.PHATE(random_state=386).fit_transform(X)\ndf[\"PHATE1\"] = coordinates[:, 0]\ndf[\"PHATE2\"] = coordinates[:, 1]\nThis is the same analytical pattern as the previous lesson. No new embedding inference is needed when loading a saved array.\nDisplay a first plot:\nfig = px.scatter(\n    df, x=\"PHATE1\", y=\"PHATE2\", color=\"role_group\",\n    hover_name=\"title\", hover_data=[\"speaker\", \"kicker\"],\n)\nst.plotly_chart(fig, width=\"stretch\")\nOne point is one short kicker. Use the plot to choose messages to read. The axes have no topic names."
+  },
+  {
+    "objectID": "demo.html#step-2-a-control-changes-the-analysis-view",
+    "href": "demo.html#step-2-a-control-changes-the-analysis-view",
+    "title": "Follow Along: Building the Explorer",
+    "section": "Step 2: a control changes the analysis view",
+    "text": "Step 2: a control changes the analysis view\nThe starter already contains a year multiselect and a filter. Move the plotting code below that filter and pass shown to px.scatter.\nyears = st.multiselect(\n    \"Conference years\", [2020, 2023, 2025],\n    default=[2020, 2023, 2025],\n)\nshown = df.loc[df[\"year\"].isin(years)]\n\nif shown.empty:\n    st.info(\"Select a year to display messages.\")\n    st.stop()\nKeep the full map’s frame:\nfig.update_xaxes(range=[df[\"PHATE1\"].min() - 0.1,\n                        df[\"PHATE1\"].max() + 0.1])\nfig.update_yaxes(range=[df[\"PHATE2\"].min() - 0.1,\n                        df[\"PHATE2\"].max() + 0.1])\nThe full app additionally assigns colors using the complete set of categories so a category keeps its color even when another disappears. Keeping coordinates fixed is separate from keeping automatic axis and color scales fixed.\nCompleted checkpoint:\nuv run streamlit run day2/02_filters.py\nChange a year and watch FITTING PHATE in the terminal. Explain why that repeated computation is unnecessary."
+  },
+  {
+    "objectID": "demo.html#step-3-summaries-explain-the-current-view",
+    "href": "demo.html#step-3-summaries-explain-the-current-view",
+    "title": "Follow Along: Building the Explorer",
+    "section": "Step 3: summaries explain the current view",
+    "text": "Step 3: summaries explain the current view\na, b, c = st.columns(3)\na.metric(\"Talks displayed\", f\"{len(shown)} / {len(df)}\")\nb.metric(\"Speakers represented\", shown[\"speaker\"].nunique())\nc.metric(\"Conferences represented\",\n         shown[[\"year\", \"month\"]].drop_duplicates().shape[0])\nPlace summaries before the empty-result check if you want zeros to remain visible when the user selects nothing. The final app does this.\nChoose another summary only if it supports the user’s question. Explain its denominator and which filters affect it."
+  },
+  {
+    "objectID": "demo.html#step-4-cache-a-function-result",
+    "href": "demo.html#step-4-cache-a-function-result",
+    "title": "Follow Along: Building the Explorer",
+    "section": "Step 4: cache a function result",
+    "text": "Step 4: cache a function result\nExtract the PHATE computation into a function, above its first call:\n@st.cache_data\ndef compute_map(X, random_state=386):\n    print(\"CACHE MISS: fitting PHATE\", flush=True)\n    return phate.PHATE(random_state=random_state).fit_transform(X)\n\ncoordinates = compute_map(X)\nTry a year filter again. The script still calls compute_map(X), but a matching cache entry supplies the coordinates without executing the body.\nIf PHATE runs quickly on your computer, use the isolated experiment:\nuv run streamlit run day2/04_cache_lab.py\nThe delay is explicitly simulated and the returned value is a square. Try 2, 3, 2, then an unrelated display change."
+  },
+  {
+    "objectID": "demo.html#step-5-cache-input-preparation",
+    "href": "demo.html#step-5-cache-input-preparation",
+    "title": "Follow Along: Building the Explorer",
+    "section": "Step 5: cache input preparation",
+    "text": "Step 5: cache input preparation\nThe finished loader accepts the small files’ contents:\nfrom io import BytesIO\n\n@st.cache_data\ndef load_inputs(csv_bytes, embedding_bytes):\n    df = pd.read_csv(BytesIO(csv_bytes))\n    with np.load(BytesIO(embedding_bytes), allow_pickle=False) as saved:\n        assert np.array_equal(saved[\"talk_id\"], df[\"talk_id\"].to_numpy(dtype=str))\n        assert np.array_equal(saved[\"kicker\"], df[\"kicker\"].to_numpy(dtype=str))\n        X = saved[\"embeddings\"].copy()\n    return df, X\n\ndf, X = load_inputs(\n    (ROOT / \"data/talks.csv\").read_bytes(),\n    (ROOT / \"data/talk_embeddings.npz\").read_bytes(),\n)\nThese files are small. Reading their bytes on a rerun makes freshness explicit. The cache reuses parsing and validation. Larger datasets call for a deliberate version or fingerprint strategy instead of reading everything on every interaction.\nThe reusable pipeline.py includes the same operations plus model, shape, and finite-value checks. The cached checkpoint imports it:\nuv run streamlit run day2/03_cached.py"
+  },
+  {
+    "objectID": "demo.html#step-6-connect-the-plot-to-evidence",
+    "href": "demo.html#step-6-connect-the-plot-to-evidence",
+    "title": "Follow Along: Building the Explorer",
+    "section": "Step 6: connect the plot to evidence",
+    "text": "Step 6: connect the plot to evidence\nFor a short live version, add a displayed-talk selector and source link:\ntalk_id = st.selectbox(\"Choose a displayed talk\", shown[\"talk_id\"])\ntalk = shown.loc[shown[\"talk_id\"].eq(talk_id)].iloc[0]\nst.subheader(talk[\"title\"])\nst.write(talk[\"kicker\"])\nst.link_button(\"Read the original talk\", talk[\"url\"])\nThe final app formats selector labels as titles and speaker names, so readers do not need to recognize internal IDs."
+  },
+  {
+    "objectID": "demo.html#completed-app-and-optional-extensions",
+    "href": "demo.html#completed-app-and-optional-extensions",
+    "title": "Follow Along: Building the Explorer",
+    "section": "Completed app and optional extensions",
+    "text": "Completed app and optional extensions\nuv run streamlit run app.py\nThe finished app includes speaker and role filters, literal text matching, stable categorical colors, source links, downloads, and a similarity-ranking expander. Similarity uses the original 768-dimensional vectors, excludes the chosen talk, and ranks only the other currently displayed records.\nThe keyword input performs a literal text match. It does not embed the query or claim to perform semantic search.\nFor the optional local embedding cache, start Ollama and pull Nomic first:\nollama pull nomic-embed-text:v1.5\nuv run streamlit run day2/05_local_embedding.py\nSubmit the same message twice, then a changed message. A form batches the inputs until Submit. The function’s arguments are text, model, and prefix. The decorator caches returned vectors, while Ollama manages its own model process."
+  },
+  {
+    "objectID": "demo.html#final-check",
+    "href": "demo.html#final-check",
+    "title": "Follow Along: Building the Explorer",
+    "section": "Final check",
+    "text": "Final check\nAsk a partner to find two messages worth reading for a lesson and explain how they checked the context. Observe where they hesitate. Make one interface improvement before following the deployment guide."
+  },
+  {
+    "objectID": "day1_slides.html#warm-up-our-existing-plotly-figure",
+    "href": "day1_slides.html#warm-up-our-existing-plotly-figure",
+    "title": "Useful Dashboards",
+    "section": "Warm-up: our existing Plotly figure",
+    "text": "Warm-up: our existing Plotly figure\nOur published conference map already supports hover, zoom, and legend interaction.\nWith a partner:\n\nWhat can a reader investigate without running Python?\nWhat would still require changing our notebook?\n\n\nAllow 90 seconds. Hover shows source metadata, zoom changes the view, and legend clicks show or hide traces. New pandas filters, new summary calculations, and new model computations require executable analysis or additional precomputed browser logic. Connect this to the earlier Plotly publishing lesson."
+  },
+  {
+    "objectID": "day1_slides.html#todays-question",
+    "href": "day1_slides.html#todays-question",
+    "title": "Useful Dashboards",
+    "section": "Today’s question",
+    "text": "Today’s question\n\nHow can someone explore our analysis without becoming a Python programmer?\n\nWe will identify a useful task, choose an interface, and trace the Python code behind it."
+  },
+  {
+    "objectID": "day1_slides.html#a-real-task-for-our-explorer",
+    "href": "day1_slides.html#a-real-task-for-our-explorer",
+    "title": "Useful Dashboards",
+    "section": "A real task for our explorer",
+    "text": "A real task for our explorer\nYou are preparing a lesson and remember a message about helping others.\n\nFind several messages worth reading.\nCompare who gave them and when.\nFollow the source links to check their full context.\n\n\nOpen the completed app. Spend two minutes showing one concrete path: text filter, read a kicker, open the source, then broaden the view. Avoid touring every control."
+  },
+  {
+    "objectID": "day1_slides.html#the-map-guides-a-closer-reading",
+    "href": "day1_slides.html#the-map-guides-a-closer-reading",
+    "title": "Useful Dashboards",
+    "section": "The map guides a closer reading",
+    "text": "The map guides a closer reading\n\n\n\nPHATE map of the selected conference kickers\n\n\nThe app connects this view to filters, summary counts, and the actual messages."
+  },
+  {
+    "objectID": "day1_slides.html#reproducibility-and-access",
+    "href": "day1_slides.html#reproducibility-and-access",
+    "title": "Useful Dashboards",
+    "section": "Reproducibility and access",
+    "text": "Reproducibility and access\nOur existing workflow preserves data, processing steps, code, and model outputs.\nAn app adds a guided interface to those same steps.\nThe reader chooses inputs. Our Python code performs the analysis consistently."
+  },
+  {
+    "objectID": "day1_slides.html#the-value-of-a-dashboard",
+    "href": "day1_slides.html#the-value-of-a-dashboard",
+    "title": "Useful Dashboards",
+    "section": "The value of a dashboard",
+    "text": "The value of a dashboard\n\n\n\n\n\n\n\nSituation\nUseful result\n\n\n\n\nRepeated questions\nA person can answer the next variation independently\n\n\nDifferent groups or time windows\nControls expose relevant comparisons\n\n\nA pattern needs explanation\nThe reader can inspect supporting records\n\n\nA recurring decision\nThe relevant evidence is easy to revisit"
+  },
+  {
+    "objectID": "day1_slides.html#choosing-the-right-format",
+    "href": "day1_slides.html#choosing-the-right-format",
+    "title": "Useful Dashboards",
+    "section": "Choosing the right format",
+    "text": "Choosing the right format\n\n\n\nNeed\nA reasonable starting point\n\n\n\n\nCommunicate one finding\nA labeled figure and a short explanation\n\n\nExplain a complete argument\nA report or website\n\n\nDevelop or audit an analysis\nA notebook\n\n\nExplore recurring variations\nAn interactive app\n\n\n\nDifferent formats can support the same project."
+  },
+  {
+    "objectID": "day1_slides.html#think-pair-share-does-this-need-an-app",
+    "href": "day1_slides.html#think-pair-share-does-this-need-an-app",
+    "title": "Useful Dashboards",
+    "section": "Think, pair, share: does this need an app?",
+    "text": "Think, pair, share: does this need an app?\n\nA classmate needs one figure for tomorrow’s presentation.\nA librarian repeatedly compares use across branches and dates.\nA researcher wants to inspect model outputs and their source records.\n\nChoose one. What would an app make easier? What would you ask the user first?\n\nAllow two minutes. A dashboard has development and maintenance costs. Cases 2 and 3 have plausible recurring interaction. In case 1, a clear figure is likely sufficient. Accept alternatives supported by a specific user task."
+  },
+  {
+    "objectID": "day1_slides.html#five-design-questions",
+    "href": "day1_slides.html#five-design-questions",
+    "title": "Useful Dashboards",
+    "section": "Five design questions",
+    "text": "Five design questions\n\n\n\nQuestion\nConference example\n\n\n\n\nWho is using it?\nSomeone preparing a lesson\n\n\nWhat do they need?\nRelevant messages and supporting context\n\n\nWhat evidence helps?\nKickers, metadata, and original talks\n\n\nWhich choices matter?\nYears, speakers, and text filters\n\n\nWhat builds trust?\nSource links and clear sample limitations"
+  },
+  {
+    "objectID": "day1_slides.html#compare-two-interfaces",
+    "href": "day1_slides.html#compare-two-interfaces",
+    "title": "Useful Dashboards",
+    "section": "Compare two interfaces",
+    "text": "Compare two interfaces\n\n\nInterface A\n“Conference Dashboard”\n\nA large unlabeled map\nEight controls with unfamiliar names\nA total with no explanation\nText hidden behind point numbers\n\n\nInterface B\n“Explore highlighted messages”\n\nA short purpose statement\nYears and speakers in plain language\n“36 of 52 talks displayed”\nKickers and original source links\n\n\nWhich interface helps our user complete the task? Why?"
+  },
+  {
+    "objectID": "day1_slides.html#metrics-provide-context",
+    "href": "day1_slides.html#metrics-provide-context",
+    "title": "Useful Dashboards",
+    "section": "Metrics provide context",
+    "text": "Metrics provide context\nAfter filtering to 2023 and later:\n\n\n\nSummary\nValue\n\n\n\n\nTalks displayed\n36 of 52\n\n\nSpeakers represented\n28\n\n\nConferences represented\n4\n\n\n\nWhat does each number help us interpret? Which additional metric would help a particular question?\n\nThese values come from the supplied CSV. An extra metric needs a purpose. Avoid inventing an average embedding coordinate or a cluster count for decoration."
+  },
+  {
+    "objectID": "day1_slides.html#visual-choices-support-the-task",
+    "href": "day1_slides.html#visual-choices-support-the-task",
+    "title": "Useful Dashboards",
+    "section": "Visual choices support the task",
+    "text": "Visual choices support the task\n\nPlace the question and useful evidence early.\nChoose defaults that show a meaningful view.\nUse readable labels and consistent colors.\nPair visual summaries with accessible text or a table.\nExplain empty selections and missing results."
+  },
+  {
+    "objectID": "day1_slides.html#trust-includes-the-denominator",
+    "href": "day1_slides.html#trust-includes-the-denominator",
+    "title": "Useful Dashboards",
+    "section": "Trust includes the denominator",
+    "text": "Trust includes the denominator\nThese data contain 52 selected kickers from six conferences.\nEach kicker represents a highlighted message before a talk.\nCounts describe the displayed sample. They cannot establish historical trends across the entire archive."
+  },
+  {
+    "objectID": "day1_slides.html#why-streamlit-fits-this-course",
+    "href": "day1_slides.html#why-streamlit-fits-this-course",
+    "title": "Useful Dashboards",
+    "section": "Why Streamlit fits this course",
+    "text": "Why Streamlit fits this course\nWe can reuse pandas transformations and existing Plotly figures.\nA widget returns a Python value. We use that value in our analysis, then display the result.\nThe application supplies the browser interface without requiring us to write its HTML or JavaScript.\n\nStreamlit documentation: https://docs.streamlit.io/get-started/fundamentals/main-concepts . Frame this as a good match for Python data apps. More customized web workflows may justify other frameworks."
+  },
+  {
+    "objectID": "day1_slides.html#plotly-and-streamlit",
+    "href": "day1_slides.html#plotly-and-streamlit",
+    "title": "Useful Dashboards",
+    "section": "Plotly and Streamlit",
+    "text": "Plotly and Streamlit\n\n\n\n\n\n\n\nPlotly\nStreamlit\n\n\n\n\nBuilds the figure\nBuilds the surrounding application\n\n\nProvides hover, pan, and zoom\nCollects inputs and executes Python\n\n\nCan export a standalone HTML plot\nCan connect plots, summaries, and records\n\n\n\nOur app displays a Plotly figure using st.plotly_chart(fig)."
+  },
+  {
+    "objectID": "day1_slides.html#the-browser-and-the-python-server",
+    "href": "day1_slides.html#the-browser-and-the-python-server",
+    "title": "Useful Dashboards",
+    "section": "The browser and the Python server",
+    "text": "The browser and the Python server\n\n\n\n\n\n\n\nComponent\nResponsibility\n\n\n\n\nBrowser\nDisplays the interface and sends input changes\n\n\nPython server\nRuns our script, reads data, and computes results\n\n\nLocal development\nBoth run on our computer\n\n\nHosted app\nThe server runs on the host, while the reader uses a browser\n\n\n\n\nSource: https://docs.streamlit.io/develop/concepts/architecture/architecture . A hosted app cannot automatically read the reader’s disk or call Ollama on the instructor’s laptop."
+  },
+  {
+    "objectID": "day1_slides.html#launching-an-app-with-uv",
+    "href": "day1_slides.html#launching-an-app-with-uv",
+    "title": "Useful Dashboards",
+    "section": "Launching an app with uv",
+    "text": "Launching an app with uv\nFrom the project folder:\nuv sync\nuv run streamlit run day1/01_basic.py\nuv uses the project environment. streamlit run starts the application server.\nLeave the terminal running. Press Ctrl+C there to stop the server."
+  },
+  {
+    "objectID": "day1_slides.html#a-minimal-app",
+    "href": "day1_slides.html#a-minimal-app",
+    "title": "Useful Dashboards",
+    "section": "A minimal app",
+    "text": "A minimal app\nimport streamlit as st\n\nst.title(\"Explore conference messages\")\nyear = st.select_slider(\n    \"Earliest conference year\",\n    options=[2020, 2023, 2025], value=2020,\n)\nst.write(\"Include conferences from\", year)\nThe widget returns a value we can use in Python."
+  },
+  {
+    "objectID": "day1_slides.html#the-default-execution-model",
+    "href": "day1_slides.html#the-default-execution-model",
+    "title": "Useful Dashboards",
+    "section": "The default execution model",
+    "text": "The default execution model\n\nRun the script from top to bottom.\nDisplay the Streamlit elements in the browser.\nA widget change sends an updated value to the server.\nRun the script again with that value.\n\nThis describes our basic apps. Forms and other features can change when or how much code reruns.\n\nSource: https://docs.streamlit.io/get-started/fundamentals/summary . A Plotly hover or zoom does not automatically trigger this Python cycle."
+  },
+  {
+    "objectID": "day1_slides.html#predict-the-next-run",
+    "href": "day1_slides.html#predict-the-next-run",
+    "title": "Useful Dashboards",
+    "section": "Predict the next run",
+    "text": "Predict the next run\nprint(\"START\")\ncount = 0\nname = st.text_input(\"Your name\", \"Ada\")\nif st.button(\"Add one\"):\n    count += 1\nst.write(count)\nWhat appears after clicking Add one twice? What happens after changing the name?\n\nRun day1/02_execution.py. On initial run count is 0. Each button click starts a fresh run and displays 1, not an accumulated total. Editing the name and committing it displays 0. START appears in the server terminal every run. The button is True on its click-triggered run. Allow students to explain before revealing the separate remembered counter."
+  },
+  {
+    "objectID": "day1_slides.html#terminal-output-and-app-output",
+    "href": "day1_slides.html#terminal-output-and-app-output",
+    "title": "Useful Dashboards",
+    "section": "Terminal output and app output",
+    "text": "Terminal output and app output\nprint(\"Loaded data\")       # server terminal\nst.write(\"Loaded data\")    # browser interface\nUse the terminal to observe execution while debugging.\nUse Streamlit commands for information the app’s reader needs."
+  },
+  {
+    "objectID": "day1_slides.html#remembering-across-reruns",
+    "href": "day1_slides.html#remembering-across-reruns",
+    "title": "Useful Dashboards",
+    "section": "Remembering across reruns",
+    "text": "Remembering across reruns\nif \"count\" not in st.session_state:\n    st.session_state.count = 0\n\nif st.button(\"Add one and remember\"):\n    st.session_state.count += 1\n\nst.write(st.session_state.count)\nSession State preserves additional values for this browser session. It is separate from the cache and from saved files."
+  },
+  {
+    "objectID": "day1_slides.html#follow-along-turn-an-input-into-a-filter",
+    "href": "day1_slides.html#follow-along-turn-an-input-into-a-filter",
+    "title": "Useful Dashboards",
+    "section": "Follow along: turn an input into a filter",
+    "text": "Follow along: turn an input into a filter\ndf = pd.read_csv(ROOT / \"data/talks.csv\")\nyear = st.select_slider(\n    \"Earliest conference year\",\n    options=[2020, 2023, 2025], value=2020,\n)\nshown = df.loc[df[\"year\"] &gt;= year]\nst.metric(\"Talks displayed\", f\"{len(shown)} / {len(df)}\")\nst.dataframe(shown[[\"title\", \"speaker\", \"kicker\"]])\nThe complete file defines ROOT and the imports."
+  },
+  {
+    "objectID": "day1_slides.html#a-useful-first-chart",
+    "href": "day1_slides.html#a-useful-first-chart",
+    "title": "Useful Dashboards",
+    "section": "A useful first chart",
+    "text": "A useful first chart\ncounts = shown.groupby(\"year\").size().rename(\"Talks\")\nst.bar_chart(counts)\nSelect 2025. The supplied sample shows 16 talks from 16 speakers across 2 conferences.\nHow would you label this chart so the counts are not mistaken for archive totals?"
+  },
+  {
+    "objectID": "day1_slides.html#exit-check",
+    "href": "day1_slides.html#exit-check",
+    "title": "Useful Dashboards",
+    "section": "Exit check",
+    "text": "Exit check\n\nName one user task our app supports.\nTrace what happens after changing the earliest year.\nExplain where print() and st.write() appear.\nIdentify one limitation the reader needs to see.\n\nNext time: reuse our embeddings and PHATE analysis, cache repeated work, and share the running app."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Useful Data Apps with Streamlit",
+    "section": "",
+    "text": "A reproducible analysis lets someone rerun your work. A dashboard lets someone explore that analysis and ask questions without editing Python."
+  },
+  {
+    "objectID": "index.html#two-class-meetings",
+    "href": "index.html#two-class-meetings",
+    "title": "Useful Data Apps with Streamlit",
+    "section": "Two class meetings",
+    "text": "Two class meetings\n\n\n\nMeeting\nCentral question\nMaterials\n\n\n\n\nDay 1\nWhat makes a dashboard useful, and how does Streamlit execute our code?\nSlides (PDF), day1/01_basic.py, day1/02_execution.py\n\n\nDay 2\nHow do we turn our text EDA into a responsive, shareable app?\nSlides (PDF), follow along, day2/app_live.py, completed app.py"
+  },
+  {
+    "objectID": "index.html#setup",
+    "href": "index.html#setup",
+    "title": "Useful Data Apps with Streamlit",
+    "section": "Setup",
+    "text": "Setup\nExtract the complete project, open its root folder in Positron, and run:\nuv sync\nuv run streamlit run app.py\nThe completed app includes genuine precomputed Nomic embeddings. It does not require Ollama or an API key. The first map computation can take longer than later interactions.\n\n\n\nFull-sample PHATE map of the supplied Nomic embeddings\n\n\nThe app adds filters, contextual counts, readable kickers, and source links around this analysis."
+  },
+  {
+    "objectID": "index.html#what-we-are-building",
+    "href": "index.html#what-we-are-building",
+    "title": "Useful Data Apps with Streamlit",
+    "section": "What we are building",
+    "text": "What we are building\nA person preparing a lesson can filter a sample of conference messages, inspect a map of their embeddings, read kickers, and open original talks. Summary counts explain which records support the current view.\nThe sample contains 52 selected kickers, rather than full talk bodies or a representative sample of the entire archive. Each point represents the highlighted message before a talk. Read the original text before describing a theme."
+  },
+  {
+    "objectID": "index.html#other-entry-points",
+    "href": "index.html#other-entry-points",
+    "title": "Useful Data Apps with Streamlit",
+    "section": "Other entry points",
+    "text": "Other entry points\n\nStep-by-step coding guide\nDeployment through GitHub and Community Cloud\nStreamlit reference and printable PDF\nStudent questions and practice notebook\nInstructor timing, preparation, and suggested answers"
+  },
+  {
+    "objectID": "index.html#rebuilding-this-website",
+    "href": "index.html#rebuilding-this-website",
+    "title": "Useful Data Apps with Streamlit",
+    "section": "Rebuilding this website",
+    "text": "Rebuilding this website\nInstall the Quarto CLI separately, then run:\nquarto preview\nquarto render\nQuarto writes the website and Reveal.js slides to docs/. It does not launch Streamlit or run the analysis. To publish the teaching website on GitHub Pages, choose Deploy from a branch, your branch, and /docs. Host the running Python app separately on Streamlit Community Cloud."
+  },
+  {
+    "objectID": "day2_slides.html#warm-up-what-runs-again",
+    "href": "day2_slides.html#warm-up-what-runs-again",
+    "title": "A Shareable Text Explorer",
+    "section": "Warm-up: what runs again?",
+    "text": "Warm-up: what runs again?\nOur script loads data, fits PHATE, creates a year filter, and draws a map.\nA user changes the year filter.\n\nWhich statements execute again in the basic app?\nWhich computations actually need new results?\n\n\nTwo minutes. With no cache, all those statements execute again. The full-data map need not change because the user is only filtering displayed rows. Distinguish logical dependence from the framework’s execution order."
+  },
+  {
+    "objectID": "day2_slides.html#todays-task",
+    "href": "day2_slides.html#todays-task",
+    "title": "A Shareable Text Explorer",
+    "section": "Today’s task",
+    "text": "Today’s task\nHelp someone explore similar conference messages without editing a notebook.\nWe will build the interface, reuse expensive computations, and deploy the app through GitHub."
+  },
+  {
+    "objectID": "day2_slides.html#the-analysis-we-already-know",
+    "href": "day2_slides.html#the-analysis-we-already-know",
+    "title": "A Shareable Text Explorer",
+    "section": "The analysis we already know",
+    "text": "The analysis we already know\n\n\n\nStep\nResult\n\n\n\n\nRead the teaching CSV\n52 messages and their metadata\n\n\nEmbed the kicker text\nOne 768-dimensional vector per message\n\n\nFit PHATE\nTwo plotting coordinates per message\n\n\nBuild a Plotly figure\nAn interactive view to guide reading\n\n\n\nTitles, speakers, and dates stay outside the model input."
+  },
+  {
+    "objectID": "day2_slides.html#the-map-guides-a-closer-reading",
+    "href": "day2_slides.html#the-map-guides-a-closer-reading",
+    "title": "A Shareable Text Explorer",
+    "section": "The map guides a closer reading",
+    "text": "The map guides a closer reading\n\n\n\nPHATE map of the selected conference kickers\n\n\nThe app connects this view to filters, summary counts, and the actual messages."
+  },
+  {
+    "objectID": "day2_slides.html#prepared-outputs-and-a-reproducible-workflow",
+    "href": "day2_slides.html#prepared-outputs-and-a-reproducible-workflow",
+    "title": "A Shareable Text Explorer",
+    "section": "Prepared outputs and a reproducible workflow",
+    "text": "Prepared outputs and a reproducible workflow\nThe project includes genuine saved Nomic embeddings.\nTheir artifact records the text, ordered talk IDs, model, and prefix.\nPreparation code and provenance explain how to regenerate them. The hosted app can use them without running Ollama.\n\nThe supplied vectors use the official Nomic quantized ONNX export. data/embedding_provenance.json records the exact revision, hashes, backend, and pooling. The previous lesson used Ollama. These are genuine outputs of the same named model with a different inference backend, so exact vectors and PHATE layouts can differ. Import previous vectors using scripts/prepare_data.py if matching the previous map is important. Students do not need ONNX dependencies for the app."
+  },
+  {
+    "objectID": "day2_slides.html#follow-along-the-first-map",
+    "href": "day2_slides.html#follow-along-the-first-map",
+    "title": "A Shareable Text Explorer",
+    "section": "Follow along: the first map",
+    "text": "Follow along: the first map\nuv run streamlit run day2/01_map.py\nRead the short file together:\n\nLoad the table and saved vectors.\nCheck that rows and texts match.\nFit PHATE and add its coordinates.\nDisplay the familiar Plotly figure."
+  },
+  {
+    "objectID": "day2_slides.html#why-alignment-matters",
+    "href": "day2_slides.html#why-alignment-matters",
+    "title": "A Shareable Text Explorer",
+    "section": "Why alignment matters",
+    "text": "Why alignment matters\nassert np.array_equal(\n    saved[\"talk_id\"], df[\"talk_id\"].to_numpy(dtype=str)\n)\nassert np.array_equal(\n    saved[\"kicker\"], df[\"kicker\"].to_numpy(dtype=str)\n)\nA vector must remain attached to the text that produced it.\nSorting only one file can create a plausible picture with incorrect labels."
+  },
+  {
+    "objectID": "day2_slides.html#meaningful-filters",
+    "href": "day2_slides.html#meaningful-filters",
+    "title": "A Shareable Text Explorer",
+    "section": "Meaningful filters",
+    "text": "Meaningful filters\nyears = st.multiselect(\n    \"Conference years\", [2020, 2023, 2025],\n    default=[2020, 2023, 2025],\n)\nshown = df.loc[df[\"year\"].isin(years)]\nUse shown for the map and its supporting records.\nAn empty selection means no years. Tell the reader how to recover."
+  },
+  {
+    "objectID": "day2_slides.html#metrics-for-the-current-view",
+    "href": "day2_slides.html#metrics-for-the-current-view",
+    "title": "A Shareable Text Explorer",
+    "section": "Metrics for the current view",
+    "text": "Metrics for the current view\nWith a partner, propose a useful summary.\nWhat question does it answer? Does it describe the full sample or the filtered records?\nOur starting choices:\n\nTalks displayed out of the full sample\nUnique speakers represented\nDistinct conferences represented\n\n\nTwo minutes. A conference is a year-month combination, not just a year. The full sample has 52 talks, 35 speakers, and 6 conferences. All numbers should update together. An average kicker length is defensible only when connected to a question about the represented text."
+  },
+  {
+    "objectID": "day2_slides.html#a-summary-row",
+    "href": "day2_slides.html#a-summary-row",
+    "title": "A Shareable Text Explorer",
+    "section": "A summary row",
+    "text": "A summary row\na, b, c = st.columns(3)\na.metric(\"Talks displayed\", f\"{len(shown)} / {len(df)}\")\nb.metric(\"Speakers represented\", shown[\"speaker\"].nunique())\nc.metric(\"Conferences represented\",\n         shown[[\"year\", \"month\"]].drop_duplicates().shape[0])\nFor 2025: 16 / 52 talks, 16 speakers, 2 conferences."
+  },
+  {
+    "objectID": "day2_slides.html#filtering-and-refitting",
+    "href": "day2_slides.html#filtering-and-refitting",
+    "title": "A Shareable Text Explorer",
+    "section": "Filtering and refitting",
+    "text": "Filtering and refitting\nOur app fits the full sample once, then filters the displayed rows.\nThe original coordinates, axis ranges, and color assignments remain stable.\nRefitting PHATE on a subset would ask a different question and create a different map. Keep that as a separate analysis choice."
+  },
+  {
+    "objectID": "day2_slides.html#observation-an-unrelated-input-feels-slow",
+    "href": "day2_slides.html#observation-an-unrelated-input-feels-slow",
+    "title": "A Shareable Text Explorer",
+    "section": "Observation: an unrelated input feels slow",
+    "text": "Observation: an unrelated input feels slow\nuv run streamlit run day2/02_filters.py\nWatch the terminal while changing the year selection.\nWhy does FITTING PHATE appear again?\nWhich result could we reuse?"
+  },
+  {
+    "objectID": "day2_slides.html#a-function-call-can-reuse-its-result",
+    "href": "day2_slides.html#a-function-call-can-reuse-its-result",
+    "title": "A Shareable Text Explorer",
+    "section": "A function call can reuse its result",
+    "text": "A function call can reuse its result\n@st.cache_data\ndef compute_map(X, random_state=386):\n    print(\"CACHE MISS: fitting PHATE\")\n    return phate.PHATE(\n        random_state=random_state\n    ).fit_transform(X)\nThe call still occurs on a rerun. A cache hit skips the function body and returns its saved result.\n\nSource: https://docs.streamlit.io/develop/concepts/architecture/caching . The key includes function code and hashed input arguments. The decorator is a practical introduction to decorators, not a topic requiring a full Python metaprogramming detour."
+  },
+  {
+    "objectID": "day2_slides.html#cache-hit-or-cache-miss",
+    "href": "day2_slides.html#cache-hit-or-cache-miss",
+    "title": "A Shareable Text Explorer",
+    "section": "Cache hit or cache miss?",
+    "text": "Cache hit or cache miss?\n\n\n\nChange\nCached PHATE result?\n\n\n\n\nColor points by another metadata field\nReuse\n\n\nFilter which full-map points appear\nReuse\n\n\nSupply different embedding vectors\nRecompute\n\n\nChange the random-state argument\nRecompute\n\n\nClear this function’s cache\nRecompute on the next call\n\n\n\nExplain each answer using the function’s inputs."
+  },
+  {
+    "objectID": "day2_slides.html#a-short-cache-experiment",
+    "href": "day2_slides.html#a-short-cache-experiment",
+    "title": "A Shareable Text Explorer",
+    "section": "A short cache experiment",
+    "text": "A short cache experiment\nuv run streamlit run day2/04_cache_lab.py\nPredict, then try:\n\nSelect 2, then 3, then 2 again.\nChange only the display preference.\nClear the cache and repeat.\n\nThe one-second delay is deliberately simulated. The result is ordinary arithmetic.\n\nUse this for three minutes if PHATE is too fast to demonstrate timing clearly. It isolates caching from the statistical method. Do not imply the delay simulates actual measured inference time."
+  },
+  {
+    "objectID": "day2_slides.html#caching-the-actual-pipeline",
+    "href": "day2_slides.html#caching-the-actual-pipeline",
+    "title": "A Shareable Text Explorer",
+    "section": "Caching the actual pipeline",
+    "text": "Caching the actual pipeline\n\n\n\nWork\nTreatment\n\n\n\n\nLoad and validate saved data\nst.cache_data\n\n\nCompute the full PHATE map\nst.cache_data\n\n\nApply cheap filters and summaries\nRecalculate\n\n\nLoad a Python model or connection object\nOften st.cache_resource\n\n\n\nOur deployed app loads embedding arrays. It does not load an embedding model."
+  },
+  {
+    "objectID": "day2_slides.html#cache-session-or-saved-artifact",
+    "href": "day2_slides.html#cache-session-or-saved-artifact",
+    "title": "A Shareable Text Explorer",
+    "section": "Cache, session, or saved artifact?",
+    "text": "Cache, session, or saved artifact?\n\n\n\nNeed\nMechanism\n\n\n\n\nReuse an expensive function result\nData cache\n\n\nReuse a model or connection object\nResource cache\n\n\nRemember this user’s additional choices\nSession State\n\n\nKeep model outputs across app restarts\nSaved artifact\n\n\n\nBy default, caches can serve multiple users. User-specific memory belongs in the appropriate session mechanism.\n\nSource: https://docs.streamlit.io/develop/concepts/architecture/caching . Cached data returns copies. Cached resources normally share the same object and require care with mutation and concurrency. Scope configuration exists, but is outside this introduction. A cache is not a durable project data store."
+  },
+  {
+    "objectID": "day2_slides.html#freshness-is-an-input-design-problem",
+    "href": "day2_slides.html#freshness-is-an-input-design-problem",
+    "title": "A Shareable Text Explorer",
+    "section": "Freshness is an input-design problem",
+    "text": "Freshness is an input-design problem\nOur finished loader receives the actual file contents:\ndf, X = load_inputs(\n    csv_path.read_bytes(),\n    embedding_path.read_bytes(),\n)\nChanged contents produce a different cache key.\nA cached function given only a filename will not automatically notice every change to that file."
+  },
+  {
+    "objectID": "day2_slides.html#live-sources-and-local-embeddings",
+    "href": "day2_slides.html#live-sources-and-local-embeddings",
+    "title": "A Shareable Text Explorer",
+    "section": "Live sources and local embeddings",
+    "text": "Live sources and local embeddings\nFor a changing external source, a lifetime can limit stale results:\n@st.cache_data(ttl=600)\ndef fetch_data(url):\n    ...\nAfter expiration, a subsequent call refreshes the result. This is not a scheduled data pipeline.\nAn optional local app caches a real embedding call by text, model, and prefix.\n\nOnly show day2/05_local_embedding.py if Ollama is prepared. The core hosted app never requires it. A Streamlit cache of returned vectors does not manage the Ollama server’s loaded-model memory. Source: https://docs.ollama.com/api/embed ."
+  },
+  {
+    "objectID": "day2_slides.html#evidence-behind-the-map",
+    "href": "day2_slides.html#evidence-behind-the-map",
+    "title": "A Shareable Text Explorer",
+    "section": "Evidence behind the map",
+    "text": "Evidence behind the map\nThe completed app connects the visual view to:\n\nA selected kicker and its author\nAn original source link\nSupporting records for the current filters\nAn optional ranking using original-vector cosine similarity\n\nRead messages before naming a theme. The 2D map can distort relationships."
+  },
+  {
+    "objectID": "day2_slides.html#deployment-changes-where-python-runs",
+    "href": "day2_slides.html#deployment-changes-where-python-runs",
+    "title": "A Shareable Text Explorer",
+    "section": "Deployment changes where Python runs",
+    "text": "Deployment changes where Python runs\n\n\n\n\n\n\n\nLocation\nRole\n\n\n\n\nGitHub repository\nStores code, data artifacts, and dependency definitions\n\n\nStreamlit Community Cloud\nInstalls dependencies and runs Python\n\n\nReader’s browser\nDisplays and interacts with the app\n\n\nGitHub Pages\nHosts our static project website, which can link to the app\n\n\n\n\nSources: https://docs.streamlit.io/develop/concepts/architecture/architecture and https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy . Push the supplied small embedding artifact. Never push the local .venv directory or model weights."
+  },
+  {
+    "objectID": "day2_slides.html#the-deployment-workflow",
+    "href": "day2_slides.html#the-deployment-workflow",
+    "title": "A Shareable Text Explorer",
+    "section": "The deployment workflow",
+    "text": "The deployment workflow\n\nRun app.py locally and check its filters.\nCommit and push code, data, pyproject.toml, and uv.lock.\nOpen share.streamlit.io and create an app.\nSelect the repository, branch, and app.py.\nChoose Python 3.12, deploy, and inspect the logs.\n\nCommunity Cloud recognizes uv.lock. Use the same environment definition locally and on the host.\n\nReserve 10-12 minutes. Sources: https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/app-dependencies and https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy . The exact UI wording may change. Follow deployment.qmd. If accounts block a student, pair them with a deployed app and complete the task-based check."
+  },
+  {
+    "objectID": "day2_slides.html#a-small-update-completes-the-loop",
+    "href": "day2_slides.html#a-small-update-completes-the-loop",
+    "title": "A Shareable Text Explorer",
+    "section": "A small update completes the loop",
+    "text": "A small update completes the loop\nChange a useful label, commit, and push to the app’s selected branch.\nCheck the deployed result and logs.\nAsk a partner to answer the original question using only the interface.\nCould they identify relevant messages and verify the source?"
+  },
+  {
+    "objectID": "day2_slides.html#exit-check",
+    "href": "day2_slides.html#exit-check",
+    "title": "A Shareable Text Explorer",
+    "section": "Exit check",
+    "text": "Exit check\n\nWhy can changing a color reuse the PHATE result?\nWhat distinguishes saved embeddings from a runtime cache?\nWhere does Python run after deployment?\nWhich interface choice made the analysis easier to use?\n\nKeep the reproducible workflow visible in the repository and the reader’s task clear in the app."
+  },
+  {
+    "objectID": "deployment.html",
+    "href": "deployment.html",
+    "title": "Deployment with uv, GitHub, and Community Cloud",
+    "section": "",
+    "text": "Sign in to Streamlit Community Cloud with the GitHub account that can access your repository. Complete account connection before the deployment portion of class. Check whether your course organization permits that connection. A personal repository containing the course demo is an alternative when organizational permissions block access.\nKeep all demo code and data in one repository. This public teaching sample does not require a secret or API key."
+  },
+  {
+    "objectID": "deployment.html#before-class",
+    "href": "deployment.html#before-class",
+    "title": "Deployment with uv, GitHub, and Community Cloud",
+    "section": "",
+    "text": "Sign in to Streamlit Community Cloud with the GitHub account that can access your repository. Complete account connection before the deployment portion of class. Check whether your course organization permits that connection. A personal repository containing the course demo is an alternative when organizational permissions block access.\nKeep all demo code and data in one repository. This public teaching sample does not require a secret or API key."
+  },
+  {
+    "objectID": "deployment.html#run-the-completed-app-locally",
+    "href": "deployment.html#run-the-completed-app-locally",
+    "title": "Deployment with uv, GitHub, and Community Cloud",
+    "section": "1. Run the completed app locally",
+    "text": "1. Run the completed app locally\nFrom the project root:\nuv sync --locked\nuv run streamlit run app.py\nCheck all years, only 2025, and no years. Expected talk counts are 52, 16, and 0. Open a source link and check that the supporting table agrees with the plot."
+  },
+  {
+    "objectID": "deployment.html#commit-and-push-the-project",
+    "href": "deployment.html#commit-and-push-the-project",
+    "title": "Deployment with uv, GitHub, and Community Cloud",
+    "section": "2. Commit and push the project",
+    "text": "2. Commit and push the project\nIf using an existing repository, copy the contents of the extracted project into that repository’s root. Keep its existing Git history. Use git status to inspect changes before committing.\nIf creating a new repository, create an empty GitHub repository, clone it with its actual URL, copy these project contents into the clone, and run these commands from the clone:\ngit status\ngit add .\ngit commit -m \"Add conference message explorer\"\ngit push\nThe supplied .gitignore excludes .venv, Python caches, and .streamlit/secrets.toml. Keep it when copying the project. Include:\n\napp.py and pipeline.py\ndata/talks.csv, data/talk_embeddings.npz, and provenance/source notes\npyproject.toml, uv.lock, and .python-version\n\nThe rest of the teaching website can remain in the same repository. Do not upload downloaded model weights or the .venv directory.\nCommunity Cloud recognizes uv.lock. Keep the matching pyproject.toml alongside it. You do not need an additional requirements.txt. The optional preparation dependency group is for rebuilding model outputs, not for normal app startup."
+  },
+  {
+    "objectID": "deployment.html#create-the-app",
+    "href": "deployment.html#create-the-app",
+    "title": "Deployment with uv, GitHub, and Community Cloud",
+    "section": "3. Create the app",
+    "text": "3. Create the app\nAt share.streamlit.io, create a new app from an existing GitHub repository. Select:\n\n\n\nSetting\nValue\n\n\n\n\nRepository\nYour repository containing this project\n\n\nBranch\nThe branch you pushed, commonly main\n\n\nMain file path\napp.py when the project is at the repository root\n\n\nPython version\n3.12, matching the project\n\n\nSecrets\nLeave empty for this demo\n\n\n\nIf the project lives in a subfolder, use its actual entrypoint path and keep its uv.lock and pyproject.toml together next to that entrypoint. The root layout is simplest for this lesson.\nDeploy and read the logs. The host installs the project dependencies, then runs your app. The local uv run streamlit run app.py command is for your terminal. Community Cloud supplies the server launch.\nSee the official deployment walkthrough if button labels change."
+  },
+  {
+    "objectID": "deployment.html#check-it-as-a-reader",
+    "href": "deployment.html#check-it-as-a-reader",
+    "title": "Deployment with uv, GitHub, and Community Cloud",
+    "section": "4. Check it as a reader",
+    "text": "4. Check it as a reader\nOpen the app’s streamlit.app URL in another browser session. Confirm that the intended audience can access it. Have someone else use the interface to answer the original question.\nGitHub stores the repository. Community Cloud runs Python. Readers need a browser. Their laptop does not need your uv environment or Ollama."
+  },
+  {
+    "objectID": "deployment.html#update-it",
+    "href": "deployment.html#update-it",
+    "title": "Deployment with uv, GitHub, and Community Cloud",
+    "section": "5. Update it",
+    "text": "5. Update it\nChange a meaningful label, commit, and push to the app’s selected branch. Community Cloud updates the app from that repository. Watch the logs and verify the change at the hosted URL. A dependency change can require rebuilding the environment.\nLink this app from the project’s GitHub Pages website. GitHub Pages hosts static HTML and cannot run this Python server."
+  },
+  {
+    "objectID": "deployment.html#common-failures",
+    "href": "deployment.html#common-failures",
+    "title": "Deployment with uv, GitHub, and Community Cloud",
+    "section": "Common failures",
+    "text": "Common failures\n\n\n\n\n\n\n\nSymptom\nWhat to check\n\n\n\n\nCannot find the repository\nGitHub account, repository permissions, and organization authorization\n\n\nMissing Python package\nCorrect lockfile and pyproject committed next to the entrypoint\n\n\nPython version conflict\nSelect Python 3.12 on Community Cloud\n\n\nMissing CSV or NPZ\nData files committed, exact filename case, and repository location\n\n\nVector alignment error\nMatching talk IDs, row order, text, model, and prefix\n\n\nWorks locally with Ollama, fails remotely\nDeploy app.py, which loads saved vectors, rather than the optional local embedding app\n\n\nSlow first visit\nCold start and initial PHATE computation. Subsequent compatible calls can reuse cached results\n\n\nNew external data does not appear\nCache input/version design or expiration policy"
+  },
+  {
+    "objectID": "deployment.html#secrets-in-other-projects",
+    "href": "deployment.html#secrets-in-other-projects",
+    "title": "Deployment with uv, GitHub, and Community Cloud",
+    "section": "Secrets in other projects",
+    "text": "Secrets in other projects\nThis demo needs none. For a project that needs credentials, keep the local .streamlit/secrets.toml out of Git and enter secrets through the host’s settings. A password or token in a public repository becomes public. Do not add an authentication system to this lesson’s demo merely to practice deployment."
+  },
+  {
+    "objectID": "instructor/guide.html",
+    "href": "instructor/guide.html",
+    "title": "Instructor Guide",
+    "section": "",
+    "text": "Students should be able to justify an interface choice using a reader’s task, trace a basic Streamlit rerun, identify reusable computation, and deploy a small app from a reproducible repository.\nThe main lesson uses genuine prepared embeddings so everyone can run the explorer without installing a local model. Only the optional live embedding demonstration requires Ollama. Keep student EDA and extra work in activities/practice.ipynb."
+  },
+  {
+    "objectID": "instructor/guide.html#learning-outcomes",
+    "href": "instructor/guide.html#learning-outcomes",
+    "title": "Instructor Guide",
+    "section": "",
+    "text": "Students should be able to justify an interface choice using a reader’s task, trace a basic Streamlit rerun, identify reusable computation, and deploy a small app from a reproducible repository.\nThe main lesson uses genuine prepared embeddings so everyone can run the explorer without installing a local model. Only the optional live embedding demonstration requires Ollama. Keep student EDA and extra work in activities/practice.ipynb."
+  },
+  {
+    "objectID": "instructor/guide.html#before-day-1",
+    "href": "instructor/guide.html#before-day-1",
+    "title": "Instructor Guide",
+    "section": "Before Day 1",
+    "text": "Before Day 1\n\nOpen the project root, run uv sync --locked, and launch app.py once.\nVerify 52 talks, 35 speakers, and 6 conferences for the full sample. Filter to 2025 and check 16, 16, and 2.\nOpen both day-one checkpoints and both rendered slide decks.\nChoose a concrete user task for the opening demo. A person preparing a lesson is the default.\nAsk students to extract the complete project and run uv sync before class.\n\nFor browser presentation, run quarto preview. Press S for speaker notes. The docs output also contains the rendered website and slides for GitHub Pages."
+  },
+  {
+    "objectID": "instructor/guide.html#day-1-50-minutes",
+    "href": "instructor/guide.html#day-1-50-minutes",
+    "title": "Instructor Guide",
+    "section": "Day 1: 50 minutes",
+    "text": "Day 1: 50 minutes\n\n\n\n\n\n\n\n\nMinutes\nTeaching move\nEvidence of understanding\n\n\n\n\n0-5\nPlotly warm-up and finished-app task\nStudents distinguish browser interaction from new Python analysis\n\n\n5-13\nValue, format choice, and first think-pair-share\nStudents name a recurring user need\n\n\n13-23\nDesign questions, interface comparison, and useful metrics\nStudents justify controls and denominators\n\n\n23-28\nStreamlit motivation and client/server roles\nStudents locate the Python computation\n\n\n28-38\nLaunch and execution prediction\nStudents explain why the ordinary counter does not accumulate\n\n\n38-48\nMinimal filter, metric, chart, and table\nStudents connect widget values to pandas\n\n\n48-50\nExit check\nUser task, rerun, output location, and limitation\n\n\n\nThe Session State counter is a short explanation, not a requirement for the main app. If time is short, show it prepared and return to the dataframe filter."
+  },
+  {
+    "objectID": "instructor/guide.html#before-day-2",
+    "href": "instructor/guide.html#before-day-2",
+    "title": "Instructor Guide",
+    "section": "Before Day 2",
+    "text": "Before Day 2\n\nAsk students to sign in to Community Cloud and connect the correct GitHub account.\nCheck repository/organization permissions beforehand. Have a personal demo repository available if organization access is blocked.\nLaunch all Day 2 checkpoints once. PHATE is small here and may run quickly. Use the explicitly simulated arithmetic cache lab when a timing difference is hard to observe.\nIf showing local inference, start Ollama and run ollama pull nomic-embed-text:v1.5 ahead of class.\nKeep the 03 cached checkpoint and completed app.py available for recovery."
+  },
+  {
+    "objectID": "instructor/guide.html#day-2-50-minutes",
+    "href": "instructor/guide.html#day-2-50-minutes",
+    "title": "Instructor Guide",
+    "section": "Day 2: 50 minutes",
+    "text": "Day 2: 50 minutes\n\n\n\n\n\n\n\n\nMinutes\nTeaching move\nScope\n\n\n\n\n0-5\nRerun prediction and the existing pipeline\nReuse prior knowledge\n\n\n5-10\nDisplay the prepared map\nday2/01_map.py\n\n\n10-18\nYear filter, summaries, and source text\nMain student coding\n\n\n18-23\nObserve repeated work\nday2/02_filters.py, optional cache lab\n\n\n23-30\nCache PHATE, explain loader freshness\nday2/03_cached.py, pipeline.py\n\n\n30-35\nSaved artifacts, state, and model resource distinction\nBrief conceptual check\n\n\n35-47\nPush, deploy, inspect logs\ndeployment.qmd\n\n\n47-50\nPartner task and exit check\nEvaluate usefulness\n\n\n\nThe deck includes more reference detail than needs narration. Keep the local embedding app, similarity ranking, download button, and extra filters as prepared demonstrations or extensions. If accounts take longer, deploy one instructor app live, pair students around accessible apps, and let individual deployment finish outside class."
+  },
+  {
+    "objectID": "instructor/guide.html#suggested-answers",
+    "href": "instructor/guide.html#suggested-answers",
+    "title": "Instructor Guide",
+    "section": "Suggested answers",
+    "text": "Suggested answers\n\nFormat choice\nA single presentation figure usually needs a clear label and explanation. Repeated comparisons across branches and dates benefit from controls. Inspecting model outputs benefits from a summary connected to source records. Accept alternatives when students specify a concrete need.\n\n\nRerun prediction\nIn day1/02_execution.py, the first counter starts at 0 on every run. Its button click makes it 1 for that run. Two clicks still display 1. Editing and committing the name displays 0. The Session State counter persists across this session’s reruns. A new tab has a separate session.\nprint() writes to the Python server’s terminal or hosted logs. st.write() displays in the app.\n\n\nCache dependencies\n\n\n\n\n\n\n\nChange\nWhat needs new analytical results?\n\n\n\n\nColor field\nFigure styling changes. Data and full-sample coordinates can be reused\n\n\nDisplayed year subset\nFilter and summaries change. Full-sample vectors and map can be reused\n\n\nOne kicker changes\nThat embedding needs regeneration and the full-data PHATE fit needs recomputation. The alignment check should reject a mismatched old artifact\n\n\nPHATE random-state argument\nThe map needs a new fit, while loading and embeddings can be reused\n\n\n\nThe supplied regeneration script deliberately rebuilds all 52 embeddings for a simple visible workflow. A larger production pipeline could persist outputs per text/model/prefix and update only changed records. Adding @st.cache_data to a per-text embedding call demonstrates that idea within a running app.\n\n\nCache experiment\nWith caching enabled, the first call for 2 is a miss, then 3 is a miss, then 2 is a hit. An unrelated preference change calls the function with the same input and should hit. Clearing the cache makes the next call a miss. Previously cached entries may exist from earlier demonstrations. Clear the function’s cache before the exercise.\n\n\nMetrics and interpretation\nFull sample: 52 talks, 35 speakers, 6 conferences. Years 2023 and 2025: 36, 28, 4. Only 2025: 16, 16, 2. Count conferences as year-month pairs.\nThe sample is purposive, with short kickers rather than full talk bodies. A count change across years does not establish archive trends. A PHATE cluster-looking region is a reason to read the texts, not proof of a topic or natural group. Similarity rankings use original-vector cosine similarity and exclude the selected talk.\n\n\nCache, state, and artifact\nThe data cache reuses function results. A resource cache normally reuses an object such as an in-process Python model. Session State holds additional per-session values. The saved NPZ artifact keeps model outputs across restarts and carries identifiers/provenance. Ollama’s server process is outside Python’s resource cache."
+  },
+  {
+    "objectID": "instructor/guide.html#reusing-the-earlier-embeddings",
+    "href": "instructor/guide.html#reusing-the-earlier-embeddings",
+    "title": "Instructor Guide",
+    "section": "Reusing the earlier embeddings",
+    "text": "Reusing the earlier embeddings\nThe original EDA archive provided saving code rather than a saved embedding file. This package therefore includes genuine Nomic inference produced using the model owner’s quantized ONNX export. It records the exact revision, hashes, prefix, and postprocessing in data/embedding_provenance.json. These outputs can differ numerically from Ollama and change a nonlinear layout. No need to teach ONNX in class.\nTo preserve the exact earlier output, import your saved talk_embeddings.npz using the command in the README. The script checks text and ID alignment. Rerender app screenshots if you need them to match that earlier map exactly."
+  },
+  {
+    "objectID": "instructor/guide.html#teaching-choices-carried-over-from-the-original-resources",
+    "href": "instructor/guide.html#teaching-choices-carried-over-from-the-original-resources",
+    "title": "Instructor Guide",
+    "section": "Teaching choices carried over from the original resources",
+    "text": "Teaching choices carried over from the original resources\nThe updated lessons retain the focus on questions, sensible defaults, context, sources, reproducibility, and Python-first development. They add a visible execution trace and a task-based evaluation. Reverse proxies, load balancing, authentication systems, multipage navigation, and background workers remain outside the main two-day route.\nUse the cheatsheet as a reference. Introduce only the commands needed for the next useful change."
+  }
+]

@@ -1,0 +1,90 @@
+---
+title: "Deployment with uv, GitHub, and Community Cloud"
+---
+
+## Before class
+
+Sign in to [Streamlit Community Cloud](https://share.streamlit.io) with the GitHub account that can access your repository. Complete account connection before the deployment portion of class. Check whether your course organization permits that connection. A personal repository containing the course demo is an alternative when organizational permissions block access.
+
+Keep all demo code and data in one repository. This public teaching sample does not require a secret or API key.
+
+## 1. Run the completed app locally
+
+From the project root:
+
+```bash
+uv sync --locked
+uv run streamlit run app.py
+```
+
+Check all years, only 2025, and no years. Expected talk counts are 52, 16, and 0. Open a source link and check that the supporting table agrees with the plot.
+
+## 2. Commit and push the project
+
+If using an existing repository, copy the contents of the extracted project into that repository's root. Keep its existing Git history. Use `git status` to inspect changes before committing.
+
+If creating a new repository, create an empty GitHub repository, clone it with its actual URL, copy these project contents into the clone, and run these commands from the clone:
+
+```bash
+git status
+git add .
+git commit -m "Add conference message explorer"
+git push
+```
+
+The supplied `.gitignore` excludes `.venv`, Python caches, and `.streamlit/secrets.toml`. Keep it when copying the project. Include:
+
+- `app.py` and `pipeline.py`
+- `data/talks.csv`, `data/talk_embeddings.npz`, and provenance/source notes
+- `pyproject.toml`, `uv.lock`, and `.python-version`
+
+The rest of the teaching website can remain in the same repository. Do not upload downloaded model weights or the `.venv` directory.
+
+Community Cloud [recognizes `uv.lock`](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/app-dependencies). Keep the matching `pyproject.toml` alongside it. You do not need an additional `requirements.txt`. The optional preparation dependency group is for rebuilding model outputs, not for normal app startup.
+
+## 3. Create the app
+
+At [share.streamlit.io](https://share.streamlit.io), create a new app from an existing GitHub repository. Select:
+
+| Setting | Value |
+|---|---|
+| Repository | Your repository containing this project |
+| Branch | The branch you pushed, commonly `main` |
+| Main file path | `app.py` when the project is at the repository root |
+| Python version | **3.12**, matching the project |
+| Secrets | Leave empty for this demo |
+
+If the project lives in a subfolder, use its actual entrypoint path and keep its `uv.lock` and `pyproject.toml` together next to that entrypoint. The root layout is simplest for this lesson.
+
+Deploy and read the logs. The host installs the project dependencies, then runs your app. The local `uv run streamlit run app.py` command is for your terminal. Community Cloud supplies the server launch.
+
+See the [official deployment walkthrough](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy) if button labels change.
+
+## 4. Check it as a reader
+
+Open the app's `streamlit.app` URL in another browser session. Confirm that the intended audience can access it. Have someone else use the interface to answer the original question.
+
+GitHub stores the repository. Community Cloud runs Python. Readers need a browser. Their laptop does not need your uv environment or Ollama.
+
+## 5. Update it
+
+Change a meaningful label, commit, and push to the app's selected branch. Community Cloud updates the app from that repository. Watch the logs and verify the change at the hosted URL. A dependency change can require rebuilding the environment.
+
+Link this app from the project's GitHub Pages website. GitHub Pages hosts static HTML and cannot run this Python server.
+
+## Common failures
+
+| Symptom | What to check |
+|---|---|
+| Cannot find the repository | GitHub account, repository permissions, and organization authorization |
+| Missing Python package | Correct lockfile and pyproject committed next to the entrypoint |
+| Python version conflict | Select Python 3.12 on Community Cloud |
+| Missing CSV or NPZ | Data files committed, exact filename case, and repository location |
+| Vector alignment error | Matching talk IDs, row order, text, model, and prefix |
+| Works locally with Ollama, fails remotely | Deploy `app.py`, which loads saved vectors, rather than the optional local embedding app |
+| Slow first visit | Cold start and initial PHATE computation. Subsequent compatible calls can reuse cached results |
+| New external data does not appear | Cache input/version design or expiration policy |
+
+## Secrets in other projects
+
+This demo needs none. For a project that needs credentials, keep the local `.streamlit/secrets.toml` out of Git and enter secrets through the host's settings. A password or token in a public repository becomes public. Do not add an authentication system to this lesson's demo merely to practice deployment.

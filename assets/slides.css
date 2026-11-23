@@ -1,0 +1,18 @@
+.reveal { font-family: "Aptos", "Segoe UI", sans-serif; color:#183249; font-size:29px; }
+.reveal .slide-background-content { background:#faf9f5; }
+.reveal h1,.reveal h2,.reveal h3 { color:#163953; font-family:inherit; font-weight:650; text-transform:none; }
+.reveal h1 { font-size:1.9em; }
+.reveal h2 { font-size:1.35em; border-bottom:3px solid #cb984e; padding-bottom:.22em; margin-bottom:.55em; }
+.reveal h3 { font-size:1.05em; }
+.reveal pre { font-size:.67em; line-height:1.35; box-shadow:none; border-left:4px solid #cb984e; }
+.reveal code { color:#17557b; }
+.reveal p,.reveal li { line-height:1.38; }
+.reveal li { margin-bottom:.35em; }
+.reveal table { font-size:.78em; }
+.reveal table td,.reveal table th { padding:.35em .5em; }
+.reveal blockquote { background:#eef2f4; border-left:5px solid #cb984e; box-shadow:none; padding:.5em .75em; width:93%; font-style:normal; }
+.reveal .small { font-size:.75em; }
+.reveal .slide-number { color:#365b75!important; }
+.reveal .footer { color:#526a7b; font-size:15px; }
+.reveal .callout { font-size:.86em; }
+.reveal .columns { gap:1.2em; }

@@ -1,0 +1,17 @@
+{
+  "model": "nomic-embed-text:v1.5",
+  "prefix": "clustering: ",
+  "backend": "Official Nomic quantized ONNX with ONNX Runtime CPU",
+  "hf_repository": "nomic-ai/nomic-embed-text-v1.5",
+  "hf_revision": "e9b6763023c676ca8431644204f50c2b100d9aab",
+  "model_file": "onnx/model_quantized.onnx",
+  "model_sha256": "b4342336debaea79de872370664b0aaeb67dea4605513d00ee236ea871a81f27",
+  "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+  "postprocessing": "attention-masked mean pooling; layer norm eps=1e-5; L2 norm; all 768 coordinates",
+  "csv_sha256": "e56c32d52c809c967f8ef9f63c69189a9b2e11c78d8ee89cc20cc215b809d1ea",
+  "embedding_sha256": "9ccb14ea561f61388dd9b105cedb8aaa43b2b6570d065ff439f03c2521f4ae20",
+  "records": 52,
+  "created_utc": "2026-11-23T15:54:02.978490+00:00",
+  "onnxruntime_version": "1.32.0",
+  "note": "Genuine model inference. Backend and quantization differ from Ollama, so numerical results and PHATE layouts can differ."
+}

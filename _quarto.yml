@@ -1,0 +1,49 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - index.qmd
+    - day1_slides.qmd
+    - day2_slides.qmd
+    - demo.qmd
+    - deployment.qmd
+    - cheatsheet.qmd
+    - instructor/guide.qmd
+    - activities/questions.qmd
+  resources:
+    - assets/
+    - data/
+    - day1/
+    - day2/
+    - scripts/
+    - app.py
+    - pipeline.py
+    - pyproject.toml
+    - uv.lock
+    - .python-version
+    - activities/practice.ipynb
+    - reference/
+website:
+  title: "STAT 386: Useful Data Apps"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Start
+      - href: day1_slides.qmd
+        text: Day 1 slides
+      - href: day2_slides.qmd
+        text: Day 2 slides
+      - href: demo.qmd
+        text: Follow along
+      - href: deployment.qmd
+        text: Deployment
+      - href: cheatsheet.qmd
+        text: Reference
+format:
+  html:
+    theme: cosmo
+    css: assets/site.css
+    toc: true
+    code-copy: true
+execute:
+  enabled: false

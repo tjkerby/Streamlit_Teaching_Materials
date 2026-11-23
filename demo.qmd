@@ -1,0 +1,240 @@
+---
+title: "Follow Along: Building the Explorer"
+---
+
+## Before starting
+
+Open the project root in Positron. Run `uv sync` once. Keep all data and scripts together. Run app commands from the terminal and stop each server with Ctrl+C before starting the next.
+
+The completed files are checkpoints, so you can recover without copying a whole screen of code. The main coding route is Day 1's basic app, followed by Day 2's map, filter, and caching. Extra controls and similarity rankings are optional extensions.
+
+## Day 1: a useful input
+
+```bash
+uv run streamlit run day1/01_basic.py
+```
+
+The file begins with familiar imports and a path relative to the script:
+
+```python
+from pathlib import Path
+import pandas as pd
+import streamlit as st
+
+ROOT = Path(__file__).resolve().parents[1]
+df = pd.read_csv(ROOT / "data/talks.csv")
+```
+
+`__file__` is this script's location. Its first parent is `day1`, and its second parent is the project root. This avoids a Windows-specific absolute path and does not depend on the browser's filesystem.
+
+Add the interface:
+
+```python
+st.title("Explore conference messages")
+year = st.select_slider(
+    "Earliest conference year",
+    options=[2020, 2023, 2025], value=2020,
+)
+shown = df.loc[df["year"] >= year]
+st.metric("Talks displayed", f"{len(shown)} / {len(df)}")
+st.bar_chart(shown.groupby("year").size().rename("Talks"))
+st.dataframe(shown[["title", "speaker", "year", "kicker"]])
+```
+
+Expected results from the supplied dataset:
+
+| Earliest year | Talks | Speakers | Conferences |
+|---|---:|---:|---:|
+| 2020 | 52 | 35 | 6 |
+| 2023 | 36 | 28 | 4 |
+| 2025 | 16 | 16 | 2 |
+
+Say what the chart counts: selected sample records, not the total number of talks in each year.
+
+## Day 1: observe execution
+
+```bash
+uv run streamlit run day1/02_execution.py
+```
+
+Predict before clicking. `count = 0` runs again on every full script run. Each click on the first button displays 1. Changing and committing the name displays 0. `print()` appears in the terminal.
+
+The separate Session State counter accumulates across reruns in this session. A new browser tab has its own session. This example supports reasoning about state and does not need to become part of the conference app.
+
+## Day 2, step 1: display the existing analysis
+
+Start with `day2/app_live.py`. It runs immediately as a small table app. Complete TODO 1 using `day2/01_map.py` as the checkpoint.
+
+```bash
+uv run streamlit run day2/app_live.py
+```
+
+After reading `df`, load the saved vectors and verify their alignment:
+
+```python
+import numpy as np
+import phate
+import plotly.express as px
+
+with np.load(ROOT / "data/talk_embeddings.npz", allow_pickle=False) as saved:
+    assert np.array_equal(saved["talk_id"], df["talk_id"].to_numpy(dtype=str))
+    assert np.array_equal(saved["kicker"], df["kicker"].to_numpy(dtype=str))
+    X = saved["embeddings"]
+
+coordinates = phate.PHATE(random_state=386).fit_transform(X)
+df["PHATE1"] = coordinates[:, 0]
+df["PHATE2"] = coordinates[:, 1]
+```
+
+This is the same analytical pattern as the previous lesson. No new embedding inference is needed when loading a saved array.
+
+Display a first plot:
+
+```python
+fig = px.scatter(
+    df, x="PHATE1", y="PHATE2", color="role_group",
+    hover_name="title", hover_data=["speaker", "kicker"],
+)
+st.plotly_chart(fig, width="stretch")
+```
+
+One point is one short kicker. Use the plot to choose messages to read. The axes have no topic names.
+
+## Step 2: a control changes the analysis view
+
+The starter already contains a year multiselect and a filter. Move the plotting code below that filter and pass `shown` to `px.scatter`.
+
+```python
+years = st.multiselect(
+    "Conference years", [2020, 2023, 2025],
+    default=[2020, 2023, 2025],
+)
+shown = df.loc[df["year"].isin(years)]
+
+if shown.empty:
+    st.info("Select a year to display messages.")
+    st.stop()
+```
+
+Keep the full map's frame:
+
+```python
+fig.update_xaxes(range=[df["PHATE1"].min() - 0.1,
+                        df["PHATE1"].max() + 0.1])
+fig.update_yaxes(range=[df["PHATE2"].min() - 0.1,
+                        df["PHATE2"].max() + 0.1])
+```
+
+The full app additionally assigns colors using the complete set of categories so a category keeps its color even when another disappears. Keeping coordinates fixed is separate from keeping automatic axis and color scales fixed.
+
+Completed checkpoint:
+
+```bash
+uv run streamlit run day2/02_filters.py
+```
+
+Change a year and watch `FITTING PHATE` in the terminal. Explain why that repeated computation is unnecessary.
+
+## Step 3: summaries explain the current view
+
+```python
+a, b, c = st.columns(3)
+a.metric("Talks displayed", f"{len(shown)} / {len(df)}")
+b.metric("Speakers represented", shown["speaker"].nunique())
+c.metric("Conferences represented",
+         shown[["year", "month"]].drop_duplicates().shape[0])
+```
+
+Place summaries before the empty-result check if you want zeros to remain visible when the user selects nothing. The final app does this.
+
+Choose another summary only if it supports the user's question. Explain its denominator and which filters affect it.
+
+## Step 4: cache a function result
+
+Extract the PHATE computation into a function, above its first call:
+
+```python
+@st.cache_data
+def compute_map(X, random_state=386):
+    print("CACHE MISS: fitting PHATE", flush=True)
+    return phate.PHATE(random_state=random_state).fit_transform(X)
+
+coordinates = compute_map(X)
+```
+
+Try a year filter again. The script still calls `compute_map(X)`, but a matching cache entry supplies the coordinates without executing the body.
+
+If PHATE runs quickly on your computer, use the isolated experiment:
+
+```bash
+uv run streamlit run day2/04_cache_lab.py
+```
+
+The delay is explicitly simulated and the returned value is a square. Try 2, 3, 2, then an unrelated display change.
+
+## Step 5: cache input preparation
+
+The finished loader accepts the small files' contents:
+
+```python
+from io import BytesIO
+
+@st.cache_data
+def load_inputs(csv_bytes, embedding_bytes):
+    df = pd.read_csv(BytesIO(csv_bytes))
+    with np.load(BytesIO(embedding_bytes), allow_pickle=False) as saved:
+        assert np.array_equal(saved["talk_id"], df["talk_id"].to_numpy(dtype=str))
+        assert np.array_equal(saved["kicker"], df["kicker"].to_numpy(dtype=str))
+        X = saved["embeddings"].copy()
+    return df, X
+
+df, X = load_inputs(
+    (ROOT / "data/talks.csv").read_bytes(),
+    (ROOT / "data/talk_embeddings.npz").read_bytes(),
+)
+```
+
+These files are small. Reading their bytes on a rerun makes freshness explicit. The cache reuses parsing and validation. Larger datasets call for a deliberate version or fingerprint strategy instead of reading everything on every interaction.
+
+The reusable `pipeline.py` includes the same operations plus model, shape, and finite-value checks. The cached checkpoint imports it:
+
+```bash
+uv run streamlit run day2/03_cached.py
+```
+
+## Step 6: connect the plot to evidence
+
+For a short live version, add a displayed-talk selector and source link:
+
+```python
+talk_id = st.selectbox("Choose a displayed talk", shown["talk_id"])
+talk = shown.loc[shown["talk_id"].eq(talk_id)].iloc[0]
+st.subheader(talk["title"])
+st.write(talk["kicker"])
+st.link_button("Read the original talk", talk["url"])
+```
+
+The final app formats selector labels as titles and speaker names, so readers do not need to recognize internal IDs.
+
+## Completed app and optional extensions
+
+```bash
+uv run streamlit run app.py
+```
+
+The finished app includes speaker and role filters, literal text matching, stable categorical colors, source links, downloads, and a similarity-ranking expander. Similarity uses the original 768-dimensional vectors, excludes the chosen talk, and ranks only the other currently displayed records.
+
+The keyword input performs a literal text match. It does not embed the query or claim to perform semantic search.
+
+For the optional local embedding cache, start Ollama and pull Nomic first:
+
+```bash
+ollama pull nomic-embed-text:v1.5
+uv run streamlit run day2/05_local_embedding.py
+```
+
+Submit the same message twice, then a changed message. A form batches the inputs until Submit. The function's arguments are text, model, and prefix. The decorator caches returned vectors, while Ollama manages its own model process.
+
+## Final check
+
+Ask a partner to find two messages worth reading for a lesson and explain how they checked the context. Observe where they hesitate. Make one interface improvement before following the [deployment guide](deployment.qmd).

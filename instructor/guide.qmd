@@ -1,0 +1,105 @@
+---
+title: "Instructor Guide"
+---
+
+## Learning outcomes
+
+Students should be able to justify an interface choice using a reader's task, trace a basic Streamlit rerun, identify reusable computation, and deploy a small app from a reproducible repository.
+
+The main lesson uses genuine prepared embeddings so everyone can run the explorer without installing a local model. Only the optional live embedding demonstration requires Ollama. Keep student EDA and extra work in `activities/practice.ipynb`.
+
+## Before Day 1
+
+1. Open the project root, run `uv sync --locked`, and launch `app.py` once.
+2. Verify 52 talks, 35 speakers, and 6 conferences for the full sample. Filter to 2025 and check 16, 16, and 2.
+3. Open both day-one checkpoints and both rendered slide decks.
+4. Choose a concrete user task for the opening demo. A person preparing a lesson is the default.
+5. Ask students to extract the complete project and run `uv sync` before class.
+
+For browser presentation, run `quarto preview`. Press S for speaker notes. The `docs` output also contains the rendered website and slides for GitHub Pages.
+
+## Day 1: 50 minutes
+
+| Minutes | Teaching move | Evidence of understanding |
+|---|---|---|
+| 0-5 | Plotly warm-up and finished-app task | Students distinguish browser interaction from new Python analysis |
+| 5-13 | Value, format choice, and first think-pair-share | Students name a recurring user need |
+| 13-23 | Design questions, interface comparison, and useful metrics | Students justify controls and denominators |
+| 23-28 | Streamlit motivation and client/server roles | Students locate the Python computation |
+| 28-38 | Launch and execution prediction | Students explain why the ordinary counter does not accumulate |
+| 38-48 | Minimal filter, metric, chart, and table | Students connect widget values to pandas |
+| 48-50 | Exit check | User task, rerun, output location, and limitation |
+
+The Session State counter is a short explanation, not a requirement for the main app. If time is short, show it prepared and return to the dataframe filter.
+
+## Before Day 2
+
+1. Ask students to sign in to Community Cloud and connect the correct GitHub account.
+2. Check repository/organization permissions beforehand. Have a personal demo repository available if organization access is blocked.
+3. Launch all Day 2 checkpoints once. PHATE is small here and may run quickly. Use the explicitly simulated arithmetic cache lab when a timing difference is hard to observe.
+4. If showing local inference, start Ollama and run `ollama pull nomic-embed-text:v1.5` ahead of class.
+5. Keep the 03 cached checkpoint and completed `app.py` available for recovery.
+
+## Day 2: 50 minutes
+
+| Minutes | Teaching move | Scope |
+|---|---|---|
+| 0-5 | Rerun prediction and the existing pipeline | Reuse prior knowledge |
+| 5-10 | Display the prepared map | `day2/01_map.py` |
+| 10-18 | Year filter, summaries, and source text | Main student coding |
+| 18-23 | Observe repeated work | `day2/02_filters.py`, optional cache lab |
+| 23-30 | Cache PHATE, explain loader freshness | `day2/03_cached.py`, `pipeline.py` |
+| 30-35 | Saved artifacts, state, and model resource distinction | Brief conceptual check |
+| 35-47 | Push, deploy, inspect logs | `deployment.qmd` |
+| 47-50 | Partner task and exit check | Evaluate usefulness |
+
+The deck includes more reference detail than needs narration. Keep the local embedding app, similarity ranking, download button, and extra filters as prepared demonstrations or extensions. If accounts take longer, deploy one instructor app live, pair students around accessible apps, and let individual deployment finish outside class.
+
+## Suggested answers
+
+### Format choice
+
+A single presentation figure usually needs a clear label and explanation. Repeated comparisons across branches and dates benefit from controls. Inspecting model outputs benefits from a summary connected to source records. Accept alternatives when students specify a concrete need.
+
+### Rerun prediction
+
+In `day1/02_execution.py`, the first counter starts at 0 on every run. Its button click makes it 1 for that run. Two clicks still display 1. Editing and committing the name displays 0. The Session State counter persists across this session's reruns. A new tab has a separate session.
+
+`print()` writes to the Python server's terminal or hosted logs. `st.write()` displays in the app.
+
+### Cache dependencies
+
+| Change | What needs new analytical results? |
+|---|---|
+| Color field | Figure styling changes. Data and full-sample coordinates can be reused |
+| Displayed year subset | Filter and summaries change. Full-sample vectors and map can be reused |
+| One kicker changes | That embedding needs regeneration and the full-data PHATE fit needs recomputation. The alignment check should reject a mismatched old artifact |
+| PHATE random-state argument | The map needs a new fit, while loading and embeddings can be reused |
+
+The supplied regeneration script deliberately rebuilds all 52 embeddings for a simple visible workflow. A larger production pipeline could persist outputs per text/model/prefix and update only changed records. Adding `@st.cache_data` to a per-text embedding call demonstrates that idea within a running app.
+
+### Cache experiment
+
+With caching enabled, the first call for 2 is a miss, then 3 is a miss, then 2 is a hit. An unrelated preference change calls the function with the same input and should hit. Clearing the cache makes the next call a miss. Previously cached entries may exist from earlier demonstrations. Clear the function's cache before the exercise.
+
+### Metrics and interpretation
+
+Full sample: 52 talks, 35 speakers, 6 conferences. Years 2023 and 2025: 36, 28, 4. Only 2025: 16, 16, 2. Count conferences as year-month pairs.
+
+The sample is purposive, with short kickers rather than full talk bodies. A count change across years does not establish archive trends. A PHATE cluster-looking region is a reason to read the texts, not proof of a topic or natural group. Similarity rankings use original-vector cosine similarity and exclude the selected talk.
+
+### Cache, state, and artifact
+
+The data cache reuses function results. A resource cache normally reuses an object such as an in-process Python model. Session State holds additional per-session values. The saved NPZ artifact keeps model outputs across restarts and carries identifiers/provenance. Ollama's server process is outside Python's resource cache.
+
+## Reusing the earlier embeddings
+
+The original EDA archive provided saving code rather than a saved embedding file. This package therefore includes genuine Nomic inference produced using the model owner's quantized ONNX export. It records the exact revision, hashes, prefix, and postprocessing in `data/embedding_provenance.json`. These outputs can differ numerically from Ollama and change a nonlinear layout. No need to teach ONNX in class.
+
+To preserve the exact earlier output, import your saved `talk_embeddings.npz` using the command in the README. The script checks text and ID alignment. Rerender app screenshots if you need them to match that earlier map exactly.
+
+## Teaching choices carried over from the original resources
+
+The updated lessons retain the focus on questions, sensible defaults, context, sources, reproducibility, and Python-first development. They add a visible execution trace and a task-based evaluation. Reverse proxies, load balancing, authentication systems, multipage navigation, and background workers remain outside the main two-day route.
+
+Use the cheatsheet as a reference. Introduce only the commands needed for the next useful change.

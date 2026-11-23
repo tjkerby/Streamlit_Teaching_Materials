@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+.quarto/
+.streamlit/secrets.toml
+*.pyc
+
+/.quarto/
+**/*.quarto_ipynb

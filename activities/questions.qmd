@@ -1,0 +1,39 @@
+---
+title: "Student Investigation"
+---
+
+Use the app as a reader first. Write your answers in the separate [practice notebook](practice.ipynb). Run Streamlit apps in a terminal, not as notebook cells.
+
+## Day 1: a useful interface
+
+1. Describe a specific person and a question they would ask about your final-project data.
+2. Explain why repeated interaction would help. Could a figure or report meet the need?
+3. Choose one control. State its default, what it changes, and how the app should handle no matching results.
+4. Propose one useful summary metric. Define its denominator and explain which filters affect it.
+
+## Day 1: predict execution
+
+In `day1/02_execution.py`, predict the first counter after two button clicks and after editing the name. Compare it to the Session State counter. Explain where the terminal output appears.
+
+## Day 2: explore the messages
+
+1. Choose a question about the represented messages, years, or recorded speaker roles.
+2. Find at least three kickers that help investigate it.
+3. Read a message that complicates your first interpretation.
+4. Open a source talk when the kicker is insufficient.
+5. State one supported finding and one next check. Restrict conclusions to this selected sample.
+
+## Day 2: reason about computation
+
+For each change, decide whether loading, embedding generation, PHATE, filtering, and summary calculations need new results:
+
+- Change the point colors.
+- Hide a year from the existing map.
+- Edit one kicker's text in the dataset.
+- Change the PHATE random-state argument.
+
+Differentiate what the script executes from what a cache can reuse.
+
+## Optional extension
+
+Improve one part of the app for your chosen user. Ask a partner to complete the task without coaching. Record the point where they hesitate and revise the interface.
